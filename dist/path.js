@@ -16,7 +16,8 @@
 
     return {
       init: init,
-      relative: relativePath
+      relative: relativePath,
+      isAbsolute: isAbsolute
     }
   };
 
@@ -51,12 +52,20 @@
    */
   function relativePath(from, to) {
     var score = calcAbsluteScore(to);
-    var rel = excludeFilename(arrayTrim(from.split(reSeparator)));
-    var abs = excludeDotpath(to.split(reSeparator))
+    var rel = trimArray(excludeFilename(from.split(reSeparator)));
+    var abs = trimArray(excludeDotpath(to.split(reSeparator)));
     var res = rel.slice(0, score).concat(abs);
-    return '/' + res.join('/')
+    return '/' + res.join('/');
   }
 
+
+  /**
+   * is absolute path ?
+   * @param {String} pathname
+   */
+  function isAbsolute(pathname) {
+    return pathname.charAt(0) === '/';
+  }
 
   /**
    * Calculate the score from the absolute path
@@ -110,7 +119,7 @@
    * @param {Array} arr
    * @return {Array}
    */
-  function arrayTrim(arr) {
+  function trimArray(arr) {
     return arr.filter(function(a) {
       return a !== '';
     });
