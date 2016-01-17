@@ -66,13 +66,13 @@
    * @return {Number}
    */
   function calcAbsluteScore(pathname) {
-  	var score = 0;
-  	var dirs = pathname.split(reSeparator);
+    var score = 0;
+    var dirs = pathname.split(reSeparator);
   
     dirs.forEach(function(dir) {
-    	if (dir === '') return 0;
+      if (dir === '') return 0;
       switch (dir) {
-      	case '..': score += (-1); break;
+        case '..': score += (-1); break;
         case '.': score += 0; break;
         default: return 0;
       }
@@ -87,8 +87,8 @@
    * @return {Array}
    */
   function excludeDotpath(arr) {
-  	return arr.filter(function(a) {
-    	return a !== '..' && a !== '.';
+    return arr.filter(function(a) {
+      return a !== '..' && a !== '.';
     });
   }
 
@@ -99,8 +99,8 @@
    * @return {Array}
    */
   function excludeFilename(arr) {
-  	return arr.filter(function(a) {
-    	return !reFilename.test(a);
+    return arr.filter(function(a) {
+      return !reFilename.test(a);
     });
   }
 
@@ -111,8 +111,9 @@
    * @return {Array}
    */
   function arrayTrim(arr) {
-  	return arr.filter(function(a) {
-    	return a !== '';
+    return arr.filter(function(a) {
+      return a !== '';
     });
   }
+
 })(this);
