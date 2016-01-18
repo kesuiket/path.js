@@ -1,6 +1,6 @@
 {
-  "name": "path-browser.js",
-  "version": "1.0.1",
+  "name": "path-browser",
+  "version": "1.0.2",
   "description": "path.js on browser",
   "main": "dist/path.js",
   "scripts": {

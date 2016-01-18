@@ -13,7 +13,7 @@ var Name = 'path';
 }(this, function () {
   'use strict';
 
-  var root = window;
+  var root = window || this;
   var doc = root.document;
   var loc = root.location;
 
