@@ -13,7 +13,7 @@ const rename = require('gulp-rename');
  */
 
 gulp.task('js', () => {
-  let src = 'dist/**/*.js';
+  let src = 'dist/path.js';
   let dest = 'dist';
 
   gulp.src(src)

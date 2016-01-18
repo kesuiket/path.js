@@ -21,6 +21,7 @@ var Name = 'path';
   var reURL = /^(?:([A-za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/
   var reFilename = /([^/]*)\.([^/]*)$/;
   var reExtname = /\.([^/.]+)$/;
+  var reProtocol = /(^http(s)?\:\/\/)/;
   var reSeparator = /\//;
   var reDirname = /(?:([^.]*)\/)*/;
 
@@ -151,6 +152,15 @@ var Name = 'path';
 
 
   /**
+   * is domain ?
+   * @param {String} pathname
+   */
+  function isDomain(pathname) {
+    return reProtocol.test(pathname);
+  }
+
+
+  /**
    * join the pathes
    * @param {String} [url1, url2, url3...]
    * @return {String}
@@ -172,7 +182,6 @@ var Name = 'path';
         }
       }
     }
-
     return normalize(path);
   }
 
@@ -183,16 +192,25 @@ var Name = 'path';
    * @return {String}
    */
   function normalize(pathname) {
-    var _isAbsolute = isAbsolute(pathname);
-    var _trailingSlash = pathname && pathname[pathname.length - 1] === '/';
-    pathname = normalizeArray(pathname.split('/'), !_isAbsolute).join('/');
-    if (!pathname && !_isAbsolute) {
+    var protocol = '';
+    var hasDomain = isDomain(pathname);
+    var isAbsolutePath = isAbsolute(pathname);
+    var trailingSlash = pathname && pathname[pathname.length - 1] === '/';
+
+    if (hasDomain) {
+      protocol = pathname.match(reProtocol)[1];
+      pathname = pathname.replace(protocol, '');
+    }
+
+    pathname = normalizeArray(pathname.split('/'), !isAbsolutePath).join('/');
+    if (!pathname && !isAbsolutePath) {
       pathname += '.';
     }
-    if (pathname && _trailingSlash) {
-      path += '/';
+    if (pathname && trailingSlash) {
+      pathname += '/';
     };
-    return (_isAbsolute ? '/' : '') + pathname;
+
+    return (isAbsolutePath ? '/' : hasDomain ? protocol : '') + pathname;
   }
 
 
@@ -230,21 +248,33 @@ var Name = 'path';
   function resolve() {
     var resolvedPath = '';
     var resolvedAbsolute = false;
+    var hasDomain = false;
+    var protocol = '';
 
     for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i -= 1) {
-      var pathname = (i >= 0) ? arguments[i] : cwd();
+      var pathname = (i >= 0) ? arguments[i] : !hasDomain ? cwd() : '';
+
+      if (!hasDomain) {
+        hasDomain = isDomain(pathname);
+      }
 
       if (!isString(pathname)) {
         throw new TypeError('Arguments to path.resolve must be strings');
       } else if (!pathname) {
         continue;
       }
+
       resolvedPath = pathname + '/' + resolvedPath;
       resolvedAbsolute = pathname[0] === '/';
     }
 
+    if (hasDomain) {
+      protocol = resolvedPath.match(reProtocol)[1];
+      resolvedPath = resolvedPath.replace(protocol, '');
+    }
+
     resolvedPath = normalizeArray(resolvedPath.split('/'), !resolvedAbsolute).join('/');
-    return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+    return ((resolvedAbsolute ? '/' : hasDomain ? protocol : '') + resolvedPath) || '.';
   }
 
 

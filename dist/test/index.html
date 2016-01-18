@@ -18,38 +18,66 @@ var absolutePath = '/dir1/dir2/index.html';
 var relativePath = '../css/style.css';
 
 
-console.log('> path is object ', typeof path === 'object');
+console.log('ℹ︎ path is object ', typeof path === 'object');
+console.log(' ');
 
 console.log('----- path.cwd() ------');
-console.log('> cwd', path.cwd());
-console.log('----- path.parse() ------');
-console.log('> parse', path.parse(fullpathWithAll));
+console.log('ℹ︎ cwd', path.cwd());
+console.log(' ');
+
 console.log('----- path.basename() ------');
-console.log('> fullpath ', path.basename(fullpath) === 'index.min.html', path.basename(fullpath));
-console.log('> fullpath ', path.basename(fullpath, '.html') === 'index.min', path.basename(fullpath, '.html'));
-console.log('> fullpathWithDironly ', path.basename(fullpathWithDironly) === '', path.basename(fullpathWithDironly));
+console.log(c(path.basename(fullpath) === 'index.min.html'), '"'+ fullpath +'"', path.basename(fullpath));
+console.log(c(path.basename(fullpath, '.html') === 'index.min'), '"'+ fullpath +'" (extname)', path.basename(fullpath, '.html'));
+console.log(c(path.basename(fullpathWithDironly) === ''), '"'+ fullpathWithDironly +'"', path.basename(fullpathWithDironly));
+console.log(' ');
+
 console.log('----- path.dirname() ------');
-console.log('> fullpath ', path.dirname(fullpath) === '/dir1/dir2', path.dirname(fullpath));
-console.log('> fullpathWithDironly ', path.dirname(fullpathWithDironly) === '/dir1/dir2', path.dirname(fullpathWithDironly));
-console.log('> fullpathWithParam ', path.dirname(fullpathWithParam) === '/dir1/dir2', path.dirname(fullpathWithParam));
+console.log(c(path.dirname(fullpath) === '/dir1/dir2'), '"'+ fullpath +'"', path.dirname(fullpath));
+console.log(c(path.dirname(fullpathWithDironly) === '/dir1/dir2'), '"'+ fullpathWithDironly +'"', path.dirname(fullpathWithDironly));
+console.log(c(path.dirname(fullpathWithParam) === '/dir1/dir2'), '"'+ fullpathWithParam +'"', path.dirname(fullpathWithParam));
+console.log('ℹ︎ "'+ relativePath +'"', path.dirname(relativePath), '"相対パスを渡した時、絶対パスが返る仕様でよいのか?"');
+console.log(' ');
+
 console.log('----- path.extname() ------');
-console.log('> fullpath ', path.extname(fullpath) === '.html', path.extname(fullpath));
-console.log('> index.html ', path.extname('index.html') === '.html', path.extname('index.html'));
-console.log('> index. ', path.extname('index.') === '', path.extname('index.'));
-console.log('> index ', path.extname('index') === '', path.extname('index'));
-console.log('> .index ', path.extname('.index') === '', path.extname('.index'));
+console.log(c(path.extname(fullpath) === '.html'), '"'+ fullpath +'"', path.extname(fullpath));
+console.log(c(path.extname('index.html') === '.html'), '"index.html"', path.extname('index.html'));
+console.log(c(path.extname('index.') === ''), '"index."', path.extname('index.'));
+console.log(c(path.extname('index') === ''), '"index"', path.extname('index'));
+console.log(c(path.extname('.index') === ''), '".index"', path.extname('.index'));
+console.log(' ');
+
 console.log('----- path.isAbsolute() ------');
-console.log('> /foo/bar ', path.isAbsolute('/foo/bar') === true, path.isAbsolute('/foo/bar'));
-console.log('> /baz/.. ', path.isAbsolute('/baz/..') === true, path.isAbsolute('/baz/..'));
-console.log('> qux/', path.isAbsolute('qux/') === false, path.isAbsolute('qux/'));
-console.log('> .', path.isAbsolute('.') === false, path.isAbsolute('.'));
+console.log(c(path.isAbsolute('/foo/bar') === true), '"/foo/bar"', path.isAbsolute('/foo/bar'));
+console.log(c(path.isAbsolute('/baz/..') === true), '"/baz/.."', path.isAbsolute('/baz/..'));
+console.log(c(path.isAbsolute('qux/') === false), '"qux/"', path.isAbsolute('qux/'));
+console.log(c(path.isAbsolute('.') === false), '"."', path.isAbsolute('.'));
+console.log(c(path.isAbsolute('http://example.com/foo/bar') === false), '"http://example.com/foo/bar"', path.isAbsolute('http://example.com/foo/bar'));
+console.log(' ');
+
 console.log('----- path.join() ------');
-console.log('>', path.join('/foo', 'bar', 'baz/asdf', 'quux', '..') === '/foo/bar/baz/asdf', path.join('/foo', 'bar', 'baz/asdf', 'quux', '..'));
+console.log(c(path.join('/foo', 'bar', 'baz/asdf', 'quux', '..') === '/foo/bar/baz/asdf'), '"/foo", "bar", "baz/asdf", "quux", ".."', path.join('/foo', 'bar', 'baz/asdf', 'quux', '..'));
+console.log(c(path.join('http://example.com', 'bar/foo', '../css/style.css') === 'http://example.com/bar/css/style.css'), '"http://example.com", "bar/foo", "../css/style.css"', path.join('http://example.com', 'bar/foo', '../css/style.css'));
+console.log(' ');
+
 console.log('----- path.resolve() ------');
-console.log('>', path.resolve('/foo/bar', './baz'));
-console.log('> abs to rel path', path.resolve(relativePath, absolutePath));
+console.log(c(path.resolve('/foo/bar', './baz') === '/foo/bar/baz'), '"/foo/bar", "./baz"', path.resolve('/foo/bar', './baz'));
+console.log(c(path.resolve('/dir1/dir2', '../css/style.css') === '/dir1/css/style.css'), '"/dir1/dir2", "../css/style.css"', path.resolve('/dir1/dir2', '../css/style.css'));
+console.log(c(path.resolve('http://example.com/bar', '../baz') === 'http://example.com/baz'), '"http://example.com/bar", "../baz"', path.resolve('http://example.com/bar', '../baz'));
+console.log('ℹ︎ "cwd", "../css/style.css"', path.resolve('../css/style.css'));
+console.log(' ');
+
 console.log('----- path.relative() ------');
-console.log('> ', path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb'));
+console.log(c(path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb') === '../../impl/bbb'), '"/data/orandea/test/aaa", "/data/orandea/impl/bbb"', path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb'));
+console.log(' ');
+
+
+function c(f) {
+  if (f) {
+    return '✔︎';
+  }
+  return '✖︎';
+}
+
 </script>
 
 </body>
