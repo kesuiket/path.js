@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>test - path.js</title>
+</head>
+<body>
+
+<script src="../path.js"></script>
+<script>
+var fullpath = 'http://example.com/dir1/dir2/index.min.html';
+var fullpathWithDironly = 'http://example.com/dir1/dir2';
+var fullpathWithPort = 'http://example.com:8080/dir1/dir2/index.html';
+var fullpathWithParam = 'http://example.com/dir1/dir2/index.html?key=value';
+var fullpathWithAll = 'http://example.com:8080/dir1/dir2/index.html?key=value#hash';
+var fullpathWithHash = 'http://example.com/dir1/dir2/index.html#hash';
+var absolutePath = '/dir1/dir2/index.html';
+var relativePath = '../css/style.css';
+
+
+console.log('> path is object ', typeof path === 'object');
+
+console.log('----- path.cwd() ------');
+console.log('> cwd', path.cwd());
+console.log('----- path.parse() ------');
+console.log('> parse', path.parse(fullpathWithAll));
+console.log('----- path.basename() ------');
+console.log('> fullpath ', path.basename(fullpath) === 'index.min.html', path.basename(fullpath));
+console.log('> fullpath ', path.basename(fullpath, '.html') === 'index.min', path.basename(fullpath, '.html'));
+console.log('> fullpathWithDironly ', path.basename(fullpathWithDironly) === '', path.basename(fullpathWithDironly));
+console.log('----- path.dirname() ------');
+console.log('> fullpath ', path.dirname(fullpath) === '/dir1/dir2', path.dirname(fullpath));
+console.log('> fullpathWithDironly ', path.dirname(fullpathWithDironly) === '/dir1/dir2', path.dirname(fullpathWithDironly));
+console.log('> fullpathWithParam ', path.dirname(fullpathWithParam) === '/dir1/dir2', path.dirname(fullpathWithParam));
+console.log('----- path.extname() ------');
+console.log('> fullpath ', path.extname(fullpath) === '.html', path.extname(fullpath));
+console.log('> index.html ', path.extname('index.html') === '.html', path.extname('index.html'));
+console.log('> index. ', path.extname('index.') === '', path.extname('index.'));
+console.log('> index ', path.extname('index') === '', path.extname('index'));
+console.log('> .index ', path.extname('.index') === '', path.extname('.index'));
+console.log('----- path.isAbsolute() ------');
+console.log('> /foo/bar ', path.isAbsolute('/foo/bar') === true, path.isAbsolute('/foo/bar'));
+console.log('> /baz/.. ', path.isAbsolute('/baz/..') === true, path.isAbsolute('/baz/..'));
+console.log('> qux/', path.isAbsolute('qux/') === false, path.isAbsolute('qux/'));
+console.log('> .', path.isAbsolute('.') === false, path.isAbsolute('.'));
+console.log('----- path.join() ------');
+console.log('>', path.join('/foo', 'bar', 'baz/asdf', 'quux', '..') === '/foo/bar/baz/asdf', path.join('/foo', 'bar', 'baz/asdf', 'quux', '..'));
+console.log('----- path.resolve() ------');
+console.log('>', path.resolve('/foo/bar', './baz'));
+console.log('> abs to rel path', path.resolve(relativePath, absolutePath));
+console.log('----- path.relative() ------');
+console.log('> ', path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb'));
+</script>
+
+</body>
