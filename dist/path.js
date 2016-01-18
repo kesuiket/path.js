@@ -26,25 +26,25 @@ var Name = 'path';
 
 
   /**
-   * Path
-   * @class
+   * Path.js API
+   * @return {Object}
+   * @see https://github.com/jinder/path/blob/master/path.js
+   * @see https://nodejs.org/api/path.html#path_path_relative_from_to
    */
-  var Path = (function() {
 
+  return (function() {
     return {
-      parse: parse,
-      basename: basename,
-      dirname: dirname,
-      extname: extname,
+      parse     : parse,
+      basename  : basename,
+      dirname   : dirname,
+      extname   : extname,
       isAbsolute: isAbsolute,
-      join: join,
-      cwd: cwd,
-      resolve: resolve,
-      relative: relative
+      join      : join,
+      cwd       : cwd,
+      resolve   : resolve,
+      relative  : relative
     };
   })();
-
-  return Path;
 
 
   /**
