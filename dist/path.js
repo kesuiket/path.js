@@ -282,69 +282,6 @@ var Name = 'path';
 
 
   /**
-   * absolute path convert relative path
-   * @param {String} from <relative path>
-   * @param {String} to <absolute path>
-   * @return {String} (to) <relative path>
-   */
-  //function relativePath(from, to) {
-    //var score = calcAbsluteScore(to);
-    //var rel = trimArray(excludeFilename(from.split(reSeparator)));
-    //var abs = trimArray(excludeDotpath(to.split(reSeparator)));
-    //var res = rel.slice(0, score).concat(abs);
-    //return '/' + res.join('/');
-  //}
-
-
-  /**
-   * Calculate the score from the absolute path
-   * - `../` = -1
-   * - `./` = 0
-   * @param {String} pathname
-   * @return {Number}
-   */
-  //function calcAbsluteScore(pathname) {
-    //var score = 0;
-    //var dirs = pathname.split(reSeparator);
-
-    //dirs.forEach(function(dir) {
-      //if (dir === '') return 0;
-      //switch (dir) {
-        //case '..': score += (-1); break;
-        //case '.': score += 0; break;
-        //default: return 0;
-      //}
-    //});
-
-    //return score;
-  //}
-
-
-  /**
-   * Exclude absolute path from [directory array]
-   * @param {Array} arr
-   * @return {Array}
-   */
-  //function excludeDotpath(arr) {
-    //return arr.filter(function(a) {
-      //return a !== '..' && a !== '.';
-    //});
-  //}
-
-
-  /**
-   * Exclude pathname from [directory array]
-   * @param {Array} arr
-   * @return {Array}
-   */
-  //function excludeFilename(arr) {
-    //return arr.filter(function(a) {
-      //return !reFilename.test(a);
-    //});
-  //}
-
-
-  /**
    * get the current working directory
    * @return {String}
    */
