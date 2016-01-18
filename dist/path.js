@@ -16,6 +16,7 @@ var Name = 'path';
   var root = window || this;
   var doc = root.document;
   var loc = root.location;
+  var a = document.createElement('a');
 
   // regExp
   var reURL = /^(?:([A-za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/
@@ -54,26 +55,30 @@ var Name = 'path';
    * @return {Object}
    */
   function parse(pathString) {
-    var URL = doc.createElement('a');
-    URL.href = pathString;
-
-    var pathname = URL.pathname;
-    var base = pathname.match(reFilename);
-    var ext = pathname.match(reExtname);
-    var dir = pathname.match(reDirname);
+    a.href = pathString;
+    var parsed = splitPath(a.href);
+    var protocol = parsed[1] + ':';
+    var domain = parsed[3];
+    var port = parsed[4];
+    var path = '/' + parsed[5];
+    var search = '?' + parsed[6];
+    var hash = '#' + parsed[7];
+    var base = path.match(reFilename);
+    var ext = path.match(reExtname);
+    var dir = path.match(reDirname);
 
     return {
-      hash      : URL.hash,
-      host      : URL.host,
-      domain    : URL.hostname,
-      path      : URL.pathname,
-      port      : URL.port,
-      protocol  : URL.protocol,
-      origin    : URL.origin,
-      serach    : URL.search,
-      dir       : dir  && dir[1],
+      protocol  : protocol,
+      domain    : domain,
+      port      : port,
+      host      : domain + ':' + port,
+      origin    : protocol + '//' + domain + ':' + port,
+      path      : path,
+      search    : search,
+      hash      : hash,
+      dir       : dir && dir[1],
       base      : base && base[1],
-      ext       : ext  && ('.' + ext[1])
+      ext       : ext && ('.' + ext[1])
     };
   }
 
@@ -102,11 +107,11 @@ var Name = 'path';
 
   /**
    * get the file name by [pathname]
-   * @param {String} pathname
+   * @param {String} p <pathname>
    * @param {String} ext <.extname>
    */
-  function basename(pathname, ext) {
-    var matched = pathname.match(reFilename);
+  function basename(p, ext) {
+    var matched = p.match(reFilename);
     if (!matched) return '';
     if (ext && ext.replace(/^\./,'') === matched[2]) {
       return matched[1];
@@ -117,10 +122,10 @@ var Name = 'path';
 
   /**
    * get the directory name by [pathname]
-   * @param {String} pathname
+   * @param {String} p <pathname>
    */
-  function dirname(pathname) {
-    var parsed = parse(pathname).path;
+  function dirname(p) {
+    var parsed = parse(p).path;
     var filename = basename(parsed);
     var re = new RegExp('/' + filename + '$');
     return parsed.replace(re, '');
@@ -129,11 +134,11 @@ var Name = 'path';
 
   /**
    * get the extension name by [pathname]
-   * @param {String} pathname
+   * @param {String} p <pathname >
    * @return {String} extname <.ext> (added dot)
    */
-  function extname(pathname) {
-    var parsed = parse(pathname).path;
+  function extname(p) {
+    var parsed = parse(p).path;
     var filename = basename(parsed);
     if (!filename || filename.charAt(0) === '.') return '';
     var matched = filename.match(reExtname);
@@ -144,19 +149,21 @@ var Name = 'path';
 
   /**
    * is absolute path ?
-   * @param {String} pathname
+   * @param {String} p <pathname>
+   * @return {Boolean}
    */
-  function isAbsolute(pathname) {
-    return pathname.charAt(0) === '/';
+  function isAbsolute(p) {
+    return p.charAt(0) === '/';
   }
 
 
   /**
    * is domain ?
-   * @param {String} pathname
+   * @param {String} p <pathname>
+   * @return {Boolean}
    */
-  function isDomain(pathname) {
-    return reProtocol.test(pathname);
+  function isDomain(p) {
+    return reProtocol.test(p);
   }
 
 
@@ -182,35 +189,29 @@ var Name = 'path';
         }
       }
     }
+
     return normalize(path);
   }
 
 
   /**
    * normalize pathname
-   * @param {String} pathname
+   * @param {String} p <pathname>
    * @return {String}
    */
-  function normalize(pathname) {
-    var protocol = '';
-    var hasDomain = isDomain(pathname);
-    var isAbsolutePath = isAbsolute(pathname);
-    var trailingSlash = pathname && pathname[pathname.length - 1] === '/';
+  function normalize(p) {
+    var isAbsolutePath = isAbsolute(p);
+    var trailingSlash = p && p[p.length - 1] === '/';
 
-    if (hasDomain) {
-      protocol = pathname.match(reProtocol)[1];
-      pathname = pathname.replace(protocol, '');
+    p = normalizeArray(p.split('/'), !isAbsolutePath).join('/');
+    if (!p && !isAbsolutePath) {
+      p += '.';
     }
-
-    pathname = normalizeArray(pathname.split('/'), !isAbsolutePath).join('/');
-    if (!pathname && !isAbsolutePath) {
-      pathname += '.';
-    }
-    if (pathname && trailingSlash) {
-      pathname += '/';
+    if (p && trailingSlash) {
+      p += '/';
     };
 
-    return (isAbsolutePath ? '/' : hasDomain ? protocol : '') + pathname;
+    return (isAbsolutePath ? '/' : '') + p;
   }
 
 
@@ -232,6 +233,8 @@ var Name = 'path';
         } else if (allowAboveRoot) {
           res.push('..');
         }
+      } else if (/^http(s)?:/.test(p)) {
+        res.push(p + '/');
       } else {
         res.push(p);
       }
@@ -249,32 +252,26 @@ var Name = 'path';
     var resolvedPath = '';
     var resolvedAbsolute = false;
     var hasDomain = false;
-    var protocol = '';
 
     for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i -= 1) {
-      var pathname = (i >= 0) ? arguments[i] : !hasDomain ? cwd() : '';
+      var p = (i >= 0) ? arguments[i] : !hasDomain ? cwd() : '';
 
       if (!hasDomain) {
-        hasDomain = isDomain(pathname);
+        hasDomain = isDomain(p);
       }
 
-      if (!isString(pathname)) {
+      if (!isString(p)) {
         throw new TypeError('Arguments to path.resolve must be strings');
-      } else if (!pathname) {
+      } else if (!p) {
         continue;
       }
 
-      resolvedPath = pathname + '/' + resolvedPath;
-      resolvedAbsolute = pathname[0] === '/';
-    }
-
-    if (hasDomain) {
-      protocol = resolvedPath.match(reProtocol)[1];
-      resolvedPath = resolvedPath.replace(protocol, '');
+      resolvedPath = p + '/' + resolvedPath;
+      resolvedAbsolute = p[0] === '/';
     }
 
     resolvedPath = normalizeArray(resolvedPath.split('/'), !resolvedAbsolute).join('/');
-    return ((resolvedAbsolute ? '/' : hasDomain ? protocol : '') + resolvedPath) || '.';
+    return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
   }
 
 
@@ -316,8 +313,7 @@ var Name = 'path';
    * @return {String}
    */
   function cwd() {
-    var pathname = parse(loc.href).path;
-    return dirname(pathname);
+    return dirname(parse(loc.href).path);
   }
 
 
