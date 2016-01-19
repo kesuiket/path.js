@@ -11,8 +11,8 @@
 var fullpath = 'http://example.com/dir1/dir2/index.min.html';
 var fullpathWithDironly = 'http://example.com/dir1/dir2';
 var fullpathWithPort = 'http://example.com:8080/dir1/dir2/index.html';
-var fullpathWithParam = 'http://example.com/dir1/dir2/index.html?key=value';
-var fullpathWithAll = 'http://example.com:8080/dir1/dir2/index.html?key=value#hash';
+var fullpathWithParam = 'http://example.com/dir1/dir2/index.html?key=value&key';
+var fullpathWithAll = 'http://example.com:8080/dir1/dir2/index.html?key=value&key2=value2#hash';
 var fullpathWithHash = 'http://example.com/dir1/dir2/index.html#hash';
 var absolutePath = '/dir1/dir2/index.html';
 var relativePath = '../css/style.css';
@@ -21,8 +21,8 @@ var relativePath = '../css/style.css';
 console.log('ℹ︎ `path` is object ', typeof path === 'object');
 console.log(' ');
 
-console.log('----- path.cwd() ------');
-console.log('ℹ︎ cwd', path.parse(fullpathWithAll));
+console.log('----- path.parse() ------');
+console.log('ℹ︎ parse', path.parse(fullpathWithAll));
 console.log(' ');
 
 console.log('----- path.cwd() ------');
@@ -32,12 +32,12 @@ console.log(' ');
 console.log('----- path.basename() ------');
 console.log(c(path.basename(fullpath) === 'index.min.html'), '"'+ fullpath +'"', path.basename(fullpath));
 console.log(c(path.basename(fullpath, '.html') === 'index.min'), '"'+ fullpath +'" (extname)', path.basename(fullpath, '.html'));
-console.log(c(path.basename(fullpathWithDironly) === ''), '"'+ fullpathWithDironly +'"', path.basename(fullpathWithDironly));
+console.log(c(path.basename(fullpathWithDironly) === 'dir2'), '"'+ fullpathWithDironly +'"', path.basename(fullpathWithDironly));
 console.log(' ');
 
 console.log('----- path.dirname() ------');
 console.log(c(path.dirname(fullpath) === '/dir1/dir2'), '"'+ fullpath +'"', path.dirname(fullpath));
-console.log(c(path.dirname(fullpathWithDironly) === '/dir1/dir2'), '"'+ fullpathWithDironly +'"', path.dirname(fullpathWithDironly));
+console.log(c(path.dirname(fullpathWithDironly) === '/dir1'), '"'+ fullpathWithDironly +'"', path.dirname(fullpathWithDironly));
 console.log(c(path.dirname(fullpathWithParam) === '/dir1/dir2'), '"'+ fullpathWithParam +'"', path.dirname(fullpathWithParam));
 console.log('ℹ︎ "'+ relativePath +'"', path.dirname(relativePath), '"相対パスを渡した時、絶対パスが返る仕様でよいのか?"');
 console.log(' ');
@@ -48,14 +48,6 @@ console.log(c(path.extname('index.html') === '.html'), '"index.html"', path.extn
 console.log(c(path.extname('index.') === ''), '"index."', path.extname('index.'));
 console.log(c(path.extname('index') === ''), '"index"', path.extname('index'));
 console.log(c(path.extname('.index') === ''), '".index"', path.extname('.index'));
-console.log(' ');
-
-console.log('----- path.isAbsolute() ------');
-console.log(c(path.isAbsolute('/foo/bar') === true), '"/foo/bar"', path.isAbsolute('/foo/bar'));
-console.log(c(path.isAbsolute('/baz/..') === true), '"/baz/.."', path.isAbsolute('/baz/..'));
-console.log(c(path.isAbsolute('qux/') === false), '"qux/"', path.isAbsolute('qux/'));
-console.log(c(path.isAbsolute('.') === false), '"."', path.isAbsolute('.'));
-console.log(c(path.isAbsolute('http://example.com/foo/bar') === false), '"http://example.com/foo/bar"', path.isAbsolute('http://example.com/foo/bar'));
 console.log(' ');
 
 console.log('----- path.join() ------');
@@ -74,6 +66,17 @@ console.log('----- path.relative() ------');
 console.log(c(path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb') === '../../impl/bbb'), '"/data/orandea/test/aaa", "/data/orandea/impl/bbb"', path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb'));
 console.log(' ');
 
+
+console.log('----- path.equal() ------');
+console.log(c(path.equal('/foo/bar', '/foo/bar') === true), '"/foo/bar", "foo/bar"', path.equal('/foo/bar', 'foo/bar'));
+console.log(c(path.equal('/foo/bar', '/foo/bar/index.html') === false), '"/foo/bar", "foo/bar/index.html"', path.equal('/foo/bar', 'foo/bar/index.html'));
+console.log(c(path.equal('/foo/bar/baz', '/foo/bar/*') === true), '"/foo/bar/baz", "foo/bar/*"', path.equal('/foo/bar/baz', 'foo/bar/*'));
+console.log(c(path.equal('/foo/bar/baz/index.html', '/foo/**/index.html') === true), '"/foo/bar/baz/index.html", "foo/**/index.html"', path.equal('/foo/bar/baz/index.html', 'foo/**/index.html'));
+console.log(c(path.equal('/foo/bar/baz/index.html', '/foo/**/*.html') === true), '"/foo/bar/baz/index.html", "foo/**/*.html"', path.equal('/foo/bar/baz/index.html', 'foo/**/*.html'));
+console.log(c(path.equal('/foo/bar/baz/index.html', '') === false), '"/foo/bar/baz/index.html", "(empty)"', path.equal('/foo/bar/baz/index.html', ''));
+console.log(c(path.equal('./bar/index.html','./index.html') === false), '"./bar/index.html", "./index.html"', path.equal('./bar/index.html','./index.html'));
+console.log(c(path.equal('/**/*') === true), '[cwd], "/**/*"', path.equal('/**/*'));
+console.log(' ');
 
 function c(f) {
   if (f) {

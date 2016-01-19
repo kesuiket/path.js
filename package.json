@@ -1,6 +1,6 @@
 {
   "name": "path-browser",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "path.js on browser",
   "main": "dist/path.js",
   "scripts": {
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/kesuiket/path.js#readme",
   "devDependencies": {
+    "browser-sync": "^2.11.1",
     "gulp": "^3.9.0",
     "gulp-jshint": "^2.0.0",
     "gulp-rename": "^1.2.2",
