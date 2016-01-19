@@ -4,6 +4,7 @@ const gulp = require('gulp');
 const jshint = require('gulp-jshint');
 const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
+const browser = require('browser-sync');
 
 
 /**
@@ -12,7 +13,7 @@ const rename = require('gulp-rename');
  * 2. js file minify
  */
 
-gulp.task('js', () => {
+gulp.task('js', done => {
   let src = 'dist/path.js';
   let dest = 'dist';
 
@@ -22,4 +23,15 @@ gulp.task('js', () => {
     .pipe(uglify())
     .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest(dest));
+});
+
+
+gulp.task('server', done => {
+  return browser.init({
+    server: {
+      baseDir: 'dist',
+      index: 'index.html'
+    },
+    startPath: '/test/index.html'
+  }) && done();
 });
