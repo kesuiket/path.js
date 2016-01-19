@@ -36,7 +36,7 @@ var joined = path.join('http://example.com', 'bar/foo', '../css/style.css');
 |`relative`|2つの絶対パスを受け取って、2つ目のパスを相対パスで返す|
 
 
-__`parse(pathString)`__  
+### `parse(pathString)`
 
 ```js
 path.parse('http://example.com:8080/foo/bar/index.html?value=key#hash');
@@ -56,7 +56,7 @@ path.parse('http://example.com:8080/foo/bar/index.html?value=key#hash');
 ```
 
 
-__`basename(path [, ext])`__
+### `basename(path [, ext])`
 
 ```js
 path.basename('/foo/bar/index.min.html');
@@ -66,14 +66,14 @@ path.basename('/foo/bar/index.min.html', '.html');
 ```
 
 
-__`dirname(path)`__
+### `dirname(path)`
 
 ```js
 path.dirname('/foo/bar/index.html');
 // return /foo/bar
 ```
 
-__`extname(path)`__
+### `extname(path)`
 
 ```js
 path.extname('/foo/bar/index.html');
@@ -81,7 +81,7 @@ path.extname('/foo/bar/index.html');
 ```
 
 
-__`join(url1, url2 [, url3...])`__
+### `join(url1, url2 [, url3...])`
 
 ```js
 path.join('/foo', 'bar', 'baz/asdf', 'quux', '..');
@@ -91,7 +91,7 @@ path.join('http://example.com', 'bar/foo', '../css/style.css');
 ```
 
 
-__`resolve([from... ,] to)`__
+### `resolve([from... ,] to)`
 
 ```js
 path.resolve('/foo/bar', './baz');
@@ -101,7 +101,7 @@ path.resolve('/foo/bar', '../css/style.css');
 ```
 
 
-__`relative(from, to)`__
+### `relative(from, to)`
 
 ```js
 path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb');
@@ -109,7 +109,7 @@ path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb');
 ```
 
 
-__`equal([host, ] target)`__
+### `equal([host, ] target)`
 
 
 ```js
@@ -127,7 +127,7 @@ path.equal('./index.html');
 ```
 
 
-__`cwd()`__
+### `cwd()`
 
 `return value` is absolute path.
 
