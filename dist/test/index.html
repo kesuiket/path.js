@@ -21,6 +21,7 @@ var path1 = '/foo/bar/index.html';
 var path2 = '/foo/bar/index.min.html';
 var path3 = '/foo/bar';
 var path4 = '../../css/style.css';
+var path5 = './js/main.min.js';
 
 
 console.log('ℹ︎ `path` is object ', typeof path === 'object');
@@ -46,7 +47,7 @@ console.log(c(path.dirname(path1) === '/foo/bar'), '"'+ path1 +'"', path.dirname
 console.log(c(path.dirname(path2) === '/foo/bar'), '"'+ path2 +'"', path.dirname(path2));
 console.log(c(path.dirname(path3) === '/foo'), '"'+ path3 +'"', path.dirname(path3));
 console.log(c(path.dirname(path4) === '/css'), '"'+ path4 +'"', path.dirname(path4));
-console.log('ℹ︎ "相対パスを渡した時、絶対パスが返る仕様でよいのか?"');
+console.log(c(path.dirname(path5) === '/test/js'), '"'+ path5 +'"', path.dirname(path5));
 console.log(' ');
 
 console.log('----- path.extname() ------');
@@ -86,9 +87,22 @@ console.log(c(path.equal('./bar/index.html','./index.html') === false), '"./bar/
 console.log(c(path.equal('/**/*') === true), '[cwd], "/**/*"', path.equal('/**/*'));
 console.log(' ');
 
+console.log('----- path.pass() ------');
+path.pass('/**/*', resolve, reject);
+path.pass('/test/index2.html', resolve, reject)
+console.log(' ');
+
 console.log('----- path.misbutton() ------');
 console.log(c(path.misbutton('/stg/test/foo', '/test/foo/bar') === '/stg/test/foo/bar'), '"/stg/test/foo", "/test/foo/bar"', path.misbutton('/stg/test/foo', '/test/foo/bar'));
 console.log(c(path.misbutton('/stg/test/foo', '/test/foo/css/style.css') === '/stg/test/foo/css/style.css'), '"/stg/test/foo", "/test/foo/css/style.css"', path.misbutton('/stg/test/foo', '/test/foo/css/style.css'));
+
+function resolve() {
+  console.log(c(true), '"passing by call back!"');
+}
+
+function reject() {
+  console.log(c(true), '"passing by error back.."');
+}
 
 function c(f) {
   if (f) {

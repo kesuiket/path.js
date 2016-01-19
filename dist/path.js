@@ -1,10 +1,3 @@
-/**
- * version 0.0.-1
- * @see https://github.com/jinder/path/blob/master/path.js
- * @see https://nodejs.org/api/path.html#path_path_relative_from_to
- */
-
-var Name = 'path';
 ;(function (root, factory) {
   'use strict';
   if (typeof define === 'function' && define.amd) {
@@ -12,7 +5,7 @@ var Name = 'path';
   } else if (typeof exports === 'object') {
     module.exports = factory.call(root);
   } else {
-    root[Name] = factory.call(root);
+    root['path'] = factory.call(root);
   }
 }(this, function () {
   'use strict';
@@ -36,6 +29,7 @@ var Name = 'path';
   /**
    * Path.js API
    * @return {Object}
+   * @see https://github.com/jinder/path/blob/master/path.js
    */
   return (function() {
     return {
@@ -49,6 +43,7 @@ var Name = 'path';
       relative  : relative,
       normalize : normalize,
       equal     : equal,
+      pass      : pass,
       misbutton : misbutton
     };
   })();
@@ -62,6 +57,7 @@ var Name = 'path';
   function parse(pathString) {
     var a = document.createElement('a');
     a.href = pathString;
+
     var protocol = a.protocol;
     var domain = a.hostname;
     var port = a.port;
@@ -129,14 +125,12 @@ var Name = 'path';
 
   /**
    * get the directory name from [pathname]
+   * return value is [absolute path]
    * @param {String} p <pathname>
    * @return {String} <directory name>
    */
   function dirname(p) {
-    var parsed = parse(p).path;
-    var filename = basename(parsed);
-    var re = new RegExp('/' + filename + '$');
-    return parsed.replace(re, '');
+    return parse(p).dir;
   }
 
 
@@ -288,6 +282,20 @@ var Name = 'path';
     }
 
     return match;
+  }
+
+
+  /**
+   * pass
+   * @param {String} passport
+   * @param {Function} callback
+   * @param {Function} errback
+   */
+  function pass(passport, callback, errback) {
+    if (equal(passport)) {
+      return callback && callback();
+    }
+    return errback && errback();
   }
 
 

@@ -129,6 +129,17 @@ path.equal('./index.html');
 ```
 
 
+## pass(path [, callback, errback])
+
+```js
+path.path('/**/*', function() {
+  console.log('callback');
+}, function() {
+  console.log('errback...');
+})
+```
+
+
 ### misbutton([current, ] missing)
 
 ```js
