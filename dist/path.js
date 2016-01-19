@@ -10,14 +10,13 @@ var Name = 'path';
   if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory();
+    module.exports = factory.call(root);
   } else {
-    root[Name] = factory();
+    root[Name] = factory.call(root);
   }
 }(this, function () {
   'use strict';
-
-  var root = window || this;
+  var root = this || window;
   var doc = root.document;
   var loc = root.location;
 
@@ -25,9 +24,8 @@ var Name = 'path';
   var slice = [].slice;
 
   // regExp
-  //          | protocol             | host        | port       | path     | search      | hash
-  var reURL = /^([\w]+:)?(?:(?:\/{2,})([\w\d.\-]+))?(?::([\d]+))?(\/[^?#]*)?(\?(?:[^#]*))?(#(?:.*))?$/;
-
+  //             | protocol             | host        | port       | path     | search      | hash
+  // var reURL = /^([\w]+:)?(?:(?:\/{2,})([\w\d.\-]+))?(?::([\d]+))?(\/[^?#]*)?(\?(?:[^#]*))?(#(?:.*))?$/;
   var reBase = /([^/?#]*)$/;
   var reDir = /(?:([^?#]*)\/)*/;
   var reExt = /(?:[^./]+)(\.[^/.]+)$/;
@@ -50,7 +48,8 @@ var Name = 'path';
       resolve   : resolve,
       relative  : relative,
       normalize : normalize,
-      equal     : equal
+      equal     : equal,
+      misbutton : misbutton
     };
   })();
 
@@ -63,15 +62,14 @@ var Name = 'path';
   function parse(pathString) {
     var a = document.createElement('a');
     a.href = pathString;
-    var allParts = splitPath(a.href);
-    var protocol = allParts[0];
-    var domain = allParts[1];
-    var port = allParts[2];
-    var path = allParts[3];
-    var search = allParts[4];
-    var hash = allParts[5];
-    var host = domain + (port ? ':' + port :'');
-    var origin = protocol + '//' + host;
+    var protocol = a.protocol;
+    var domain = a.hostname;
+    var port = a.port;
+    var path = a.pathname;
+    var search = a.search;
+    var hash = a.hash;
+    var host = a.host;
+    var origin = a.origin;
     var dir = reDir.test(path) ? reDir.exec(path)[1] : '';
     var base = reBase.test(path) ? reBase.exec(path)[1] : '';
     var ext = reExt.test(path) ? reExt.exec(path)[1] : '';
@@ -158,8 +156,9 @@ var Name = 'path';
    * @return {String} joined path
    */
   function join() {
-    var args = slice.call(arguments, 0);
     var path = '';
+    var args = slice.call(arguments, 0);
+    if (arguments.length <= 1) args.unshift(cwd());
 
     for (var i = 0; i < args.length; i += 1) {
       var segment = args[i];
@@ -293,6 +292,36 @@ var Name = 'path';
 
 
   /**
+   * misbutton
+   * @param {String} [current]
+   * @return {String} missing
+   */
+  function misbutton(current, missing) {
+    if (arguments.length < 2) {
+      current = cwd();
+      missing = arguments[0];
+    }
+
+    var root = isAbsolute(current) ? '/' : '';
+    var curParts = trimArray(current.split('/'));
+    var misParts = trimArray(missing.split('/'));
+    var length = curParts.length;
+    var sameIndex = 0;
+
+    for (var i = 0; i < length; i += 1) {
+      if (curParts[i] === misParts[sameIndex]) {
+        sameIndex += 1;
+      }
+    }
+    var diffLength = length - sameIndex;
+    var head = curParts.slice(0,diffLength);
+    var res = head.concat(misParts);
+
+    return root + res.join('/');
+  }
+
+
+  /**
    * normalize pathname
    * @param {String} p <pathname>
    * @return {String}
@@ -302,13 +331,13 @@ var Name = 'path';
     var trailingSlash = p && p[p.length - 1] === '/';
 
     p = normalizeArray(p.split('/'), !isAbsolutePath).join('/');
+
     if (!p && !isAbsolutePath) {
       p += '.';
     }
     if (p && trailingSlash) {
       p += '/';
     };
-
     return (isAbsolutePath ? '/' : '') + p;
   }
 

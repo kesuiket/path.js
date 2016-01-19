@@ -34,6 +34,8 @@ var joined = path.join('http://example.com', 'bar/foo', '../css/style.css');
 |`cwd`|現在のディレクトリーを返す|
 |`resolve`|複数のパスの相対関係を解決した絶対パスを返す|
 |`relative`|2つの絶対パスを受け取って、2つ目のパスを相対パスで返す|
+|`equal`|2つのパスを比較し、同等かどうかを判定します。ドメインは考慮しません|
+|`misbutton`|2つのパスを受け取り、1つ目のパスを基にて2つ目のパスのズレを解決します|
 
 
 ### parse(pathString)
@@ -126,6 +128,15 @@ path.equal('./index.html');
 // calculated "/current/working/directory/index.html"
 ```
 
+
+### misbutton([current, ] missing)
+
+```js
+path.misbutton('/foo/css/style.css');
+// set implicitly the current directory
+// example) cwd: "/stg/foo/"
+// return "/stg/foo/css/style.css"
+```
 
 ### cwd()
 

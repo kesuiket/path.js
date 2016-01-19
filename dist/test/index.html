@@ -17,12 +17,17 @@ var fullpathWithHash = 'http://example.com/dir1/dir2/index.html#hash';
 var absolutePath = '/dir1/dir2/index.html';
 var relativePath = '../css/style.css';
 
+var path1 = '/foo/bar/index.html';
+var path2 = '/foo/bar/index.min.html';
+var path3 = '/foo/bar';
+var path4 = '../../css/style.css';
+
 
 console.log('ℹ︎ `path` is object ', typeof path === 'object');
 console.log(' ');
 
 console.log('----- path.parse() ------');
-console.log('ℹ︎ parse', path.parse(fullpathWithAll));
+console.log('ℹ︎ parse', seeObject(path.parse(fullpathWithAll)));
 console.log(' ');
 
 console.log('----- path.cwd() ------');
@@ -30,28 +35,31 @@ console.log('ℹ︎ cwd', '"' + path.cwd() + '"');
 console.log(' ');
 
 console.log('----- path.basename() ------');
-console.log(c(path.basename(fullpath) === 'index.min.html'), '"'+ fullpath +'"', path.basename(fullpath));
-console.log(c(path.basename(fullpath, '.html') === 'index.min'), '"'+ fullpath +'" (extname)', path.basename(fullpath, '.html'));
-console.log(c(path.basename(fullpathWithDironly) === 'dir2'), '"'+ fullpathWithDironly +'"', path.basename(fullpathWithDironly));
+console.log(c(path.basename(path1) === 'index.html'), '"'+ path1 +'"', path.basename(path1));
+console.log(c(path.basename(path2, '.html') === 'index.min'), '"'+ path2 +'" (extname)', path.basename(path2, '.html'));
+console.log(c(path.basename(path3) === 'bar'), '"'+ path3 +'"', path.basename(path3));
+console.log(c(path.basename(path4) === 'style.css'), '"'+ path4 +'"', path.basename(path4));
 console.log(' ');
 
 console.log('----- path.dirname() ------');
-console.log(c(path.dirname(fullpath) === '/dir1/dir2'), '"'+ fullpath +'"', path.dirname(fullpath));
-console.log(c(path.dirname(fullpathWithDironly) === '/dir1'), '"'+ fullpathWithDironly +'"', path.dirname(fullpathWithDironly));
-console.log(c(path.dirname(fullpathWithParam) === '/dir1/dir2'), '"'+ fullpathWithParam +'"', path.dirname(fullpathWithParam));
-console.log('ℹ︎ "'+ relativePath +'"', path.dirname(relativePath), '"相対パスを渡した時、絶対パスが返る仕様でよいのか?"');
+console.log(c(path.dirname(path1) === '/foo/bar'), '"'+ path1 +'"', path.dirname(path1));
+console.log(c(path.dirname(path2) === '/foo/bar'), '"'+ path2 +'"', path.dirname(path2));
+console.log(c(path.dirname(path3) === '/foo'), '"'+ path3 +'"', path.dirname(path3));
+console.log(c(path.dirname(path4) === '/css'), '"'+ path4 +'"', path.dirname(path4));
+console.log('ℹ︎ "相対パスを渡した時、絶対パスが返る仕様でよいのか?"');
 console.log(' ');
 
 console.log('----- path.extname() ------');
-console.log(c(path.extname(fullpath) === '.html'), '"'+ fullpath +'"', path.extname(fullpath));
-console.log(c(path.extname('index.html') === '.html'), '"index.html"', path.extname('index.html'));
+console.log(c(path.extname(path1) === '.html'), '"'+ path1 +'"', path.extname(path1));
+console.log(c(path.extname('style.min.css') === '.css'), '"style.min.css"', path.extname('style.min.css'));
 console.log(c(path.extname('index.') === ''), '"index."', path.extname('index.'));
-console.log(c(path.extname('index') === ''), '"index"', path.extname('index'));
-console.log(c(path.extname('.index') === ''), '".index"', path.extname('.index'));
+console.log(c(path.extname('README') === ''), '"README"', path.extname('README'));
+console.log(c(path.extname('.gitignore') === ''), '".gitignore"', path.extname('.gitignore'));
 console.log(' ');
 
 console.log('----- path.join() ------');
 console.log(c(path.join('/foo', 'bar', 'baz/asdf', 'quux', '..') === '/foo/bar/baz/asdf'), '"/foo", "bar", "baz/asdf", "quux", ".."', path.join('/foo', 'bar', 'baz/asdf', 'quux', '..'));
+console.log(c(path.join('../css/style.css')), '[cwd], "../css/style.css"', path.join('../css/style.css'));
 console.log(c(path.join('http://example.com', 'bar/foo', '../css/style.css') === 'http://example.com/bar/css/style.css'), '"http://example.com", "bar/foo", "../css/style.css"', path.join('http://example.com', 'bar/foo', '../css/style.css'));
 console.log(' ');
 
@@ -59,7 +67,7 @@ console.log('----- path.resolve() ------');
 console.log(c(path.resolve('/foo/bar', './baz') === '/foo/bar/baz'), '"/foo/bar", "./baz"', path.resolve('/foo/bar', './baz'));
 console.log(c(path.resolve('/dir1/dir2', '../css/style.css') === '/dir1/css/style.css'), '"/dir1/dir2", "../css/style.css"', path.resolve('/dir1/dir2', '../css/style.css'));
 console.log(c(path.resolve('http://example.com/bar', '../baz') === 'http://example.com/baz'), '"http://example.com/bar", "../baz"', path.resolve('http://example.com/bar', '../baz'));
-console.log('ℹ︎ "cwd", "../css/style.css"', path.resolve('../css/style.css'));
+console.log('ℹ︎ [cwd], "../css/style.css"', path.resolve('../css/style.css'));
 console.log(' ');
 
 console.log('----- path.relative() ------');
@@ -78,6 +86,10 @@ console.log(c(path.equal('./bar/index.html','./index.html') === false), '"./bar/
 console.log(c(path.equal('/**/*') === true), '[cwd], "/**/*"', path.equal('/**/*'));
 console.log(' ');
 
+console.log('----- path.misbutton() ------');
+console.log(c(path.misbutton('/stg/test/foo', '/test/foo/bar') === '/stg/test/foo/bar'), '"/stg/test/foo", "/test/foo/bar"', path.misbutton('/stg/test/foo', '/test/foo/bar'));
+console.log(c(path.misbutton('/stg/test/foo', '/test/foo/css/style.css') === '/stg/test/foo/css/style.css'), '"/stg/test/foo", "/test/foo/css/style.css"', path.misbutton('/stg/test/foo', '/test/foo/css/style.css'));
+
 function c(f) {
   if (f) {
     return '✔︎';
@@ -85,6 +97,15 @@ function c(f) {
   return '✖︎';
 }
 
+function seeObject(obj) {
+  var res = [];
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      res.push(key + ': "' + obj[key] + '"');
+    }
+  }
+  return '{ ' + res.join(', ') + ' }';
+}
 </script>
 
 </body>
