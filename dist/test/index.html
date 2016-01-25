@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>test - path.js</title>
+</head>
+<body>
+
+<script src="../path.js"></script>
+<script>
+var fullpath = 'http://example.com/dir1/dir2/index.min.html';
+var fullpathWithDironly = 'http://example.com/dir1/dir2';
+var fullpathWithPort = 'http://example.com:8080/dir1/dir2/index.html';
+var fullpathWithParam = 'http://example.com/dir1/dir2/index.html?key=value&key';
+var fullpathWithAll = 'http://example.com:8080/dir1/dir2/index.html?key=value&key2=value2#hash';
+var fullpathWithHash = 'http://example.com/dir1/dir2/index.html#hash';
+var absolutePath = '/dir1/dir2/index.html';
+var relativePath = '../css/style.css';
+
+var path1 = '/foo/bar/index.html';
+var path2 = '/foo/bar/index.min.html';
+var path3 = '/foo/bar';
+var path4 = '../../css/style.css';
+var path5 = './js/main.min.js';
+
+
+console.log('ℹ︎ `path` is object ', typeof path === 'object');
+console.log(' ');
+
+console.log('----- path.parse() ------');
+console.log('ℹ︎ parse', seeObject(path.parse(fullpathWithAll)));
+console.log(' ');
+
+console.log('----- path.cwd() ------');
+console.log('ℹ︎ cwd', '"' + path.cwd() + '"');
+console.log(' ');
+
+console.log('----- path.basename() ------');
+console.log(c(path.basename(path1) === 'index.html'), '"'+ path1 +'"', path.basename(path1));
+console.log(c(path.basename(path2, '.html') === 'index.min'), '"'+ path2 +'" (extname)', path.basename(path2, '.html'));
+console.log(c(path.basename(path3) === 'bar'), '"'+ path3 +'"', path.basename(path3));
+console.log(c(path.basename(path4) === 'style.css'), '"'+ path4 +'"', path.basename(path4));
+console.log(' ');
+
+console.log('----- path.dirname() ------');
+console.log(c(path.dirname(path1) === '/foo/bar'), '"'+ path1 +'"', path.dirname(path1));
+console.log(c(path.dirname(path2) === '/foo/bar'), '"'+ path2 +'"', path.dirname(path2));
+console.log(c(path.dirname(path3) === '/foo'), '"'+ path3 +'"', path.dirname(path3));
+console.log(c(path.dirname(path4) === '/css'), '"'+ path4 +'"', path.dirname(path4));
+console.log(c(path.dirname(path5) === '/test/js'), '"'+ path5 +'"', path.dirname(path5));
+console.log(' ');
+
+console.log('----- path.extname() ------');
+console.log(c(path.extname(path1) === '.html'), '"'+ path1 +'"', path.extname(path1));
+console.log(c(path.extname('style.min.css') === '.css'), '"style.min.css"', path.extname('style.min.css'));
+console.log(c(path.extname('index.') === ''), '"index."', path.extname('index.'));
+console.log(c(path.extname('README') === ''), '"README"', path.extname('README'));
+console.log(c(path.extname('.gitignore') === ''), '".gitignore"', path.extname('.gitignore'));
+console.log(' ');
+
+console.log('----- path.join() ------');
+console.log(c(path.join('/foo', 'bar', 'baz/asdf', 'quux', '..') === '/foo/bar/baz/asdf'), '"/foo", "bar", "baz/asdf", "quux", ".."', path.join('/foo', 'bar', 'baz/asdf', 'quux', '..'));
+console.log(c(path.join('../css/style.css')), '[cwd], "../css/style.css"', path.join('../css/style.css'));
+console.log(c(path.join('http://example.com', 'bar/foo', '../css/style.css') === 'http://example.com/bar/css/style.css'), '"http://example.com", "bar/foo", "../css/style.css"', path.join('http://example.com', 'bar/foo', '../css/style.css'));
+console.log(' ');
+
+console.log('----- path.resolve() ------');
+console.log(c(path.resolve('/foo/bar', './baz') === '/foo/bar/baz'), '"/foo/bar", "./baz"', path.resolve('/foo/bar', './baz'));
+console.log(c(path.resolve('/dir1/dir2', '../css/style.css') === '/dir1/css/style.css'), '"/dir1/dir2", "../css/style.css"', path.resolve('/dir1/dir2', '../css/style.css'));
+console.log(c(path.resolve('http://example.com/bar', '../baz') === 'http://example.com/baz'), '"http://example.com/bar", "../baz"', path.resolve('http://example.com/bar', '../baz'));
+console.log('ℹ︎ [cwd], "../css/style.css"', path.resolve('../css/style.css'));
+console.log(' ');
+
+console.log('----- path.relative() ------');
+console.log(c(path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb') === '../../impl/bbb'), '"/data/orandea/test/aaa", "/data/orandea/impl/bbb"', path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb'));
+console.log(' ');
+
+
+console.log('----- path.equal() ------');
+console.log(c(path.equal('/foo/bar', '/foo/bar') === true), '"/foo/bar", "foo/bar"', path.equal('/foo/bar', 'foo/bar'));
+console.log(c(path.equal('/foo/bar', '/foo/bar/index.html') === false), '"/foo/bar", "foo/bar/index.html"', path.equal('/foo/bar', 'foo/bar/index.html'));
+console.log(c(path.equal('/foo/bar/baz', '/foo/bar/*') === true), '"/foo/bar/baz", "foo/bar/*"', path.equal('/foo/bar/baz', 'foo/bar/*'));
+console.log(c(path.equal('/foo/bar/baz/index.html', '/foo/**/index.html') === true), '"/foo/bar/baz/index.html", "foo/**/index.html"', path.equal('/foo/bar/baz/index.html', 'foo/**/index.html'));
+console.log(c(path.equal('/foo/bar/baz/index.html', '/foo/**/*.html') === true), '"/foo/bar/baz/index.html", "foo/**/*.html"', path.equal('/foo/bar/baz/index.html', 'foo/**/*.html'));
+console.log(c(path.equal('/foo/bar/baz/index.html', '') === false), '"/foo/bar/baz/index.html", "(empty)"', path.equal('/foo/bar/baz/index.html', ''));
+console.log(c(path.equal('./bar/index.html','./index.html') === false), '"./bar/index.html", "./index.html"', path.equal('./bar/index.html','./index.html'));
+console.log(c(path.equal('/**/*') === true), '[cwd], "/**/*"', path.equal('/**/*'));
+console.log(' ');
+
+console.log('----- path.pass() ------');
+path.pass('/**/*', resolve, reject);
+path.pass('/test/index2.html', resolve, reject)
+console.log(' ');
+
+console.log('----- path.misbutton() ------');
+console.log(c(path.misbutton('/stg/test/foo', '/test/foo/bar') === '/stg/test/foo/bar'), '"/stg/test/foo", "/test/foo/bar"', path.misbutton('/stg/test/foo', '/test/foo/bar'));
+console.log(c(path.misbutton('/stg/test/foo', '/test/foo/css/style.css') === '/stg/test/foo/css/style.css'), '"/stg/test/foo", "/test/foo/css/style.css"', path.misbutton('/stg/test/foo', '/test/foo/css/style.css'));
+
+function resolve() {
+  console.log(c(true), '"passing by call back!"');
+}
+
+function reject() {
+  console.log(c(true), '"passing by error back.."');
+}
+
+function c(f) {
+  if (f) {
+    return '✔︎';
+  }
+  return '✖︎';
+}
+
+function seeObject(obj) {
+  var res = [];
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      res.push(key + ': "' + obj[key] + '"');
+    }
+  }
+  return '{ ' + res.join(', ') + ' }';
+}
+</script>
+
+</body>

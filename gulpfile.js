@@ -23,9 +23,9 @@ gulp.task('build', done => {
 gulp.task('server', done => {
   return browser.init({
     server: {
-      baseDir: 'dist',
+      baseDir: './',
       index: 'index.html'
     },
-    startPath: '/test/index.html'
+    startPath: 'test/index.html'
   }) && done();
 });
