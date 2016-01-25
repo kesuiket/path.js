@@ -5,7 +5,7 @@
   } else if (typeof exports === 'object') {
     module.exports = factory.call(root);
   } else {
-    root['path'] = factory.call(root);
+    root.path = factory.call(root);
   }
 }(this, function () {
   'use strict';
@@ -17,13 +17,11 @@
   var slice = [].slice;
 
   // regExp
-  //             | protocol             | host        | port       | path     | search      | hash
-  // var reURL = /^([\w]+:)?(?:(?:\/{2,})([\w\d.\-]+))?(?::([\d]+))?(\/[^?#]*)?(\?(?:[^#]*))?(#(?:.*))?$/;
   var reBase = /([^/?#]*)$/;
   var reDir = /(?:([^?#]*)\/)*/;
   var reExt = /(?:[^./]+)(\.[^/.]+)$/;
   var rePro = /(?:^[\w]+?\:\/{2,})/;
-  var reSep = /\//;
+  //var reSep = /\//;
 
 
   /**
@@ -55,7 +53,7 @@
    * @return {Object}
    */
   function parse(pathString) {
-    var a = document.createElement('a');
+    var a = doc.createElement('a');
     a.href = pathString;
 
     var protocol = a.protocol;
@@ -93,13 +91,15 @@
    */
   function format(pathObject) {
     if (!isObject(pathObject)) {
-      throw new TypeError('Parameter `pathObject` must be an object, not ' + typeof pathObject);
+      throw new TypeError('Parameter `pathObject` must be an object, not ' +
+        typeof pathObject);
     }
 
     var root = pathObject.root || '';
 
     if (!isString(root)) {
-      throw new TypeError('`pathObject.root` must be a string or undefined, not ' + typeof pathObject.root);
+      throw new TypeError('`pathObject.root` must be a string or undefined, not '  + 
+        typeof pathObject.root);
     }
 
     var dir = pathObject.dir ? pathObject.dir + '/' : '';
@@ -345,7 +345,7 @@
     }
     if (p && trailingSlash) {
       p += '/';
-    };
+    }
     return (isAbsolutePath ? '/' : '') + p;
   }
 
@@ -427,17 +427,6 @@
     return arr.filter(function(a) {
       return a !== '';
     });
-  }
-
-
-  /**
-   * Split a url into
-   * [0:protocol, 1:host, 2:port, 3:path, 4:dir, 5:base, 6:ext, 7:search, 8:hash]
-   * @param {String} url
-   * @return {Array}
-   */
-  function splitPath(url) {
-    return reURL.exec(url).slice(1);
   }
 
 

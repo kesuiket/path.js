@@ -7,22 +7,16 @@ const rename = require('gulp-rename');
 const browser = require('browser-sync');
 
 
-/**
- * TODO:
- * 1. js file lint
- * 2. js file minify
- */
+gulp.task('build', done => {
+  const src = './path.js';
+  const dest = './';
 
-gulp.task('js', done => {
-  let src = 'dist/path.js';
-  let dest = 'dist';
-
-  gulp.src(src)
+  return gulp.src(src)
     .pipe(jshint('.jshintrc'))
-    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(jshint.reporter())
     .pipe(uglify())
     .pipe(rename({ suffix: '.min' }))
-    .pipe(gulp.dest(dest));
+    .pipe(gulp.dest(dest)) && done();
 });
 
 
