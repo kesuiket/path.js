@@ -157,7 +157,7 @@
     for (var i = 0; i < args.length; i += 1) {
       var segment = args[i];
       if (!isString(segment)) {
-        throw new TypeError ('Arguemnts to path.join must be strings');
+        throw new TypeError ('Arguments to path.join must be strings');
       }
       if (segment) {
         if (!path) {
