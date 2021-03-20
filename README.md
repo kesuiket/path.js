@@ -139,16 +139,6 @@ path.path('/**/*', function() {
 })
 ```
 
-
-### misbutton([current, ] missing)
-
-```js
-path.misbutton('/foo/css/style.css');
-// set implicitly the current directory
-// example) cwd: "/stg/foo/"
-// return "/stg/foo/css/style.css"
-```
-
 ### cwd()
 
 `return value` is absolute path.
